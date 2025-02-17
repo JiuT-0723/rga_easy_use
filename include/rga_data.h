@@ -1,3 +1,14 @@
+/**
+ * @file rga_data.h
+ * @author JiuT (1094316934@qq.com)
+ * @brief 
+ * @version 0.1
+ * @date 2025-02-17
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
 #pragma once
 
 #include <stdint.h>

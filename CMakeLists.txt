@@ -1,6 +1,6 @@
 # 编译器路径
 if($ENV{ARCH} MATCHES "x86_64")
-  message(STATUS "System: $ENV{ARCH}")
+  message(STATUS "System: $ENV{ARCH} ")
   set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)
   set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)
 endif()
@@ -25,7 +25,7 @@ include_directories(
 
 # link_directories(PUBLIC ${CMAKE_CURRENT_LIST_DIR}/rga_api/lib)
 add_library(${PROJECT_NAME} STATIC ${SRC_LIST}
-  src/rga_task.cpp
+  src/rga_easy_use.cpp
   dma_api/dma_alloc.cpp
 )
 

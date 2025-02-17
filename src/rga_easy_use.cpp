@@ -1,4 +1,15 @@
-#include "rga_task.h"
+/**
+ * @file rga_easy_use.cpp
+ * @author JiuT (1094316934@qq.com)
+ * @brief rga 图像操作封装
+ * @version 0.1
+ * @date 2025-02-17
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
+#include "rga_easy_use.h"
 
 #include <cstring>
 #include <memory>
@@ -8,7 +19,7 @@
 #define CLAC_ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
 
 namespace JiuT_RGA {
-classRGATask::classRGATask(int width, int height, rga_format_e format) : format_(format) {
+classRGAEasyUse::classRGAEasyUse(int width, int height, rga_format_e format) : format_(format) {
   int byte_align = 1;
   if (vtr_byte_align_16_.end() != std::find(vtr_byte_align_16_.begin(), vtr_byte_align_16_.end(), static_cast<int>(format))) {
     byte_align = 16;
@@ -21,11 +32,11 @@ classRGATask::classRGATask(int width, int height, rga_format_e format) : format_
   printf("width_: %d, height_: %d\n", width_, height_);
 }
 
-classRGATask::~classRGATask() {
+classRGAEasyUse::~classRGAEasyUse() {
   if (rga_handle_) releasebuffer_handle(rga_handle_);
   if (dma_obj_.dma_buf) dma_buf_free(dma_obj_.dma_buf_size, &dma_obj_.dma_fd, dma_obj_.dma_buf);
 }
-rga_err_e classRGATask::init() {
+rga_err_e classRGAEasyUse::init() {
   int rga_format = static_cast<int>(format_);
   dma_obj_.dma_buf_size = width_ * height_ * get_bpp_from_format(rga_format);
   printf("get_bpp_from_format(rga_format): %f\n", get_bpp_from_format(rga_format));
@@ -38,7 +49,7 @@ rga_err_e classRGATask::init() {
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e classRGATask::inputRGA(const uint8_t *data, uint32_t size) {
+rga_err_e classRGAEasyUse::inputRGA(const uint8_t *data, uint32_t size) {
   if (size != dma_obj_.dma_buf_size) {
     throw std::length_error{"The input size does not match: need " + std::to_string(dma_obj_.dma_buf_size) + ", but got " + std::to_string(size)};
   }
@@ -46,7 +57,7 @@ rga_err_e classRGATask::inputRGA(const uint8_t *data, uint32_t size) {
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e classRGATask::getBufferData(void *data, uint32_t size) {
+rga_err_e classRGAEasyUse::getBufferData(void *data, uint32_t size) {
   if (size != dma_obj_.dma_buf_size) {
     throw std::length_error{"The output size does not match: need " + std::to_string(dma_obj_.dma_buf_size) + ", but got " + std::to_string(size)};
   }
@@ -54,9 +65,9 @@ rga_err_e classRGATask::getBufferData(void *data, uint32_t size) {
   return rga_err_e::RGA_SUCCESS;
 }
 
-std::tuple<int, int, int> classRGATask::getSize() { return std::make_tuple(width_, height_, dma_obj_.dma_buf_size); }
+std::tuple<int, int, int> classRGAEasyUse::getSize() { return std::make_tuple(width_, height_, dma_obj_.dma_buf_size); }
 
-rga_err_e resize(classRGATask &src, classRGATask &dst) {
+rga_err_e resize(classRGAEasyUse &src, classRGAEasyUse &dst) {
   auto ret = imresize(src.getRGABuffer(), dst.getRGABuffer());
   if (ret < 0) {
     return rga_err_e::RGA_RESIZE_FAIL;
@@ -64,7 +75,7 @@ rga_err_e resize(classRGATask &src, classRGATask &dst) {
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e crop(classRGATask &src, classRGATask &dst, int x, int y, int width, int height) {
+rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height) {
   im_rect rect = {x, y, width, height};
   auto ret = imcrop(src.getRGABuffer(), dst.getRGABuffer(), rect);
   if (ret < 0) {
@@ -73,7 +84,7 @@ rga_err_e crop(classRGATask &src, classRGATask &dst, int x, int y, int width, in
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e makeBorder(classRGATask &src, classRGATask &dst, int x, int y, int width, int height) {
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height) {
   im_rect rect = {x, y, width, height};
   auto ret = improcess(src.getRGABuffer(), dst.getRGABuffer(), {}, {}, rect, {}, IM_SYNC);
   if (ret < 0) {

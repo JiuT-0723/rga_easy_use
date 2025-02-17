@@ -6,6 +6,16 @@
 对齐后的参数可通过 `getSize()` 获取
 
 ```cpp
-JiuT_RGA::classRGATask rga_src(src.cols, src.rows, rga_format_e::BGR888);
+#include "rga_easy_use.h"
+
+JiuT_RGA::classRGAEasyUse rga_src(src.cols, src.rows, rga_format_e::BGR888);
 auto [width, height, size] = rga_src.getSize();
+```
+
+## 当前完成功能
+
+```Bash
+  1. resize
+  2. crop
+  3. makeBorder
 ```

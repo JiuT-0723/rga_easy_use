@@ -1,7 +1,7 @@
 /**
  * @file rga_task.h
  * @author JiuT (1094316934@qq.com)
- * @brief rga_task头文件
+ * @brief rga 图像操作封装
  * @version 0.1
  * @date 2025-02-17
  *
@@ -15,11 +15,12 @@
 #include "im2d.h"
 #include "rga_data.h"
 #include "rga_err.h"
+
 namespace JiuT_RGA {
-class classRGATask {
+class classRGAEasyUse {
  public:
-  classRGATask(int width, int height, rga_format_e format);
-  ~classRGATask();
+  classRGAEasyUse(int width, int height, rga_format_e format);
+  ~classRGAEasyUse();
 
   rga_err_e init();
   rga_err_e inputRGA(const uint8_t *data, uint32_t size);
@@ -41,10 +42,7 @@ class classRGATask {
   std::vector<int> vtr_byte_align_16_ = {RK_FORMAT_BGR_888, RK_FORMAT_RGB_888};
   std::vector<int> vtr_byte_align_4_ = {RK_FORMAT_BGRA_8888, RK_FORMAT_RGBA_8888};
 };
-
-rga_err_e resize(classRGATask &src, classRGATask &dst);
-
-rga_err_e crop(classRGATask &src, classRGATask &dst, int x, int y, int width, int height);
-
-rga_err_e makeBorder(classRGATask &src, classRGATask &dst, int x, int y, int width, int height);
+rga_err_e resize(classRGAEasyUse &src, classRGAEasyUse &dst);
+rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height);
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height);
 }  // namespace JiuT_RGA
