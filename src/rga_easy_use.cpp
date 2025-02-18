@@ -29,7 +29,6 @@ classRGAEasyUse::classRGAEasyUse(int width, int height, rga_format_e format) : f
   }
   width_ = CLAC_ALIGN(width, byte_align);
   height_ = CLAC_ALIGN(height, byte_align);
-  printf("width_: %d, height_: %d\n", width_, height_);
 }
 
 classRGAEasyUse::~classRGAEasyUse() {
@@ -39,7 +38,6 @@ classRGAEasyUse::~classRGAEasyUse() {
 rga_err_e classRGAEasyUse::init() {
   int rga_format = static_cast<int>(format_);
   dma_obj_.dma_buf_size = width_ * height_ * get_bpp_from_format(rga_format);
-  printf("get_bpp_from_format(rga_format): %f\n", get_bpp_from_format(rga_format));
   auto ret = dma_buf_alloc(DMA_HEAP_DMA32_UNCACHED_PATH, dma_obj_.dma_buf_size, &dma_obj_.dma_fd, (void **)&dma_obj_.dma_buf);
   if (ret < 0) {
     return rga_err_e::RGA_DMA32_ALLOC_FAIL;
@@ -92,4 +90,15 @@ rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, i
   }
   return rga_err_e::RGA_SUCCESS;
 }
+
+rga_err_e rectangle(classRGAEasyUse &src, int x, int y, int width, int height, int r, int g, int b, int line_width) {
+  im_rect rect = {x, y, width, height};
+  uint32_t color = (b << 16) | (g << 8) | r;
+  auto ret = imrectangle(src.getRGABuffer(), rect, color, line_width);
+  if (ret < 0) {
+    return rga_err_e::RGA_RECTANGLE_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
 }  // namespace JiuT_RGA

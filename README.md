@@ -12,10 +12,13 @@ JiuT_RGA::classRGAEasyUse rga_src(src.cols, src.rows, rga_format_e::BGR888);
 auto [width, height, size] = rga_src.getSize();
 ```
 
+## 需要设备驱动文件`/dev/dma_heap/system-uncached-dma32`
+
 ## 当前完成功能
 
 ```Bash
   1. resize
   2. crop
   3. makeBorder
+  4. rectangle
 ```

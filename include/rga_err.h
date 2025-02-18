@@ -18,4 +18,5 @@ enum class rga_err_e {
   RGA_RESIZE_FAIL = -3,
   RGA_CROP_FAIL = -4,
   RGA_MAKE_BORDER_FAIL = -5,
+  RGA_RECTANGLE_FAIL = -6,
 };

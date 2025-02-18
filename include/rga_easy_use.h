@@ -45,4 +45,5 @@ class classRGAEasyUse {
 rga_err_e resize(classRGAEasyUse &src, classRGAEasyUse &dst);
 rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height);
 rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height);
+rga_err_e rectangle(classRGAEasyUse &src, int x, int y, int width, int height, int r, int g, int b, int line_width);
 }  // namespace JiuT_RGA
