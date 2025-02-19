@@ -38,3 +38,16 @@ enum class rga_format_e {
   RGBA8888 = RK_FORMAT_RGBA_8888,
   NV12 = RK_FORMAT_YCbCr_420_SP,
 };
+
+enum class rga_rotate_e {
+  ROTATE_90 = IM_HAL_TRANSFORM_ROT_90,
+  ROTATE_180 = IM_HAL_TRANSFORM_ROT_180,
+  ROTATE_270 = IM_HAL_TRANSFORM_ROT_270,
+};
+
+enum class rga_flip_e {
+  FLIP_H = IM_HAL_TRANSFORM_FLIP_H,
+  FLIP_V = IM_HAL_TRANSFORM_FLIP_V,
+  FLIP_H_V = IM_HAL_TRANSFORM_FLIP_H_V,
+};
+

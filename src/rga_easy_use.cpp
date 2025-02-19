@@ -19,6 +19,8 @@
 #define CLAC_ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
 
 namespace JiuT_RGA {
+inline static int __clip(int x, int width, int max) { return (x + width) < max ? width : max - x; }
+
 classRGAEasyUse::classRGAEasyUse(int width, int height, rga_format_e format) : format_(format) {
   int byte_align = 1;
   if (vtr_byte_align_16_.end() != std::find(vtr_byte_align_16_.begin(), vtr_byte_align_16_.end(), static_cast<int>(format))) {
@@ -81,7 +83,7 @@ rga_err_e resize(classRGAEasyUse &src, classRGAEasyUse &dst) {
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height) {
+rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
   im_rect rect = {x, y, width, height};
   auto ret = imcrop(src.getRGABuffer(), dst.getRGABuffer(), rect);
   if (ret < 0) {
@@ -90,8 +92,13 @@ rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int wid
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height) {
-  im_rect rect = {x, y, width, height};
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t left, uint16_t upper) {
+  auto [fg_width, fg_height, fg_size] = src.getSize();
+  auto [bg_width, bg_height, bg_size] = dst.getSize();
+  if (left > bg_width || upper > bg_height) {
+    return rga_err_e::RGA_MAKE_BORDER_FAIL;
+  }
+  im_rect rect = {left, upper, fg_width, fg_height};
   auto ret = improcess(src.getRGABuffer(), dst.getRGABuffer(), {}, {}, rect, {}, IM_SYNC);
   if (ret < 0) {
     return rga_err_e::RGA_MAKE_BORDER_FAIL;
@@ -99,12 +106,86 @@ rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, i
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e rectangle(classRGAEasyUse &src, int x, int y, int width, int height, int r, int g, int b, int line_width) {
-  im_rect rect = {x, y, width, height};
+rga_err_e rectangle(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width) {
+  auto [img_width, img_height, img_size] = src.getSize();
+  im_rect rect = {x, y, __clip(x, width, img_width), __clip(y, height, img_height)};
   uint32_t color = (b << 16) | (g << 8) | r;
   auto ret = imrectangle(src.getRGABuffer(), rect, color, line_width);
   if (ret < 0) {
     return rga_err_e::RGA_RECTANGLE_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
+rga_err_e rectangleGroup(classRGAEasyUse &src, std::vector<std::array<uint16_t, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width) {
+  auto [img_width, img_height, img_size] = src.getSize();
+  std::vector<im_rect> rects;
+  rects.reserve(point_group.size());
+  int size = point_group.size();
+  rects.reserve(img_size);
+  for (auto &point : point_group) {
+    if (point[0] > img_width || point[1] > img_height) {
+      size--;
+      continue;
+    }
+    im_rect rect = {point[0], point[1], __clip(point[0], point[2], img_width), __clip(point[1], point[3], img_height)};
+    rects.insert(rects.end(), rect);
+  }
+  uint32_t color = (b << 16) | (g << 8) | r;
+  auto ret = imrectangleArray(src.getRGABuffer(), rects.data(), size, color, line_width);
+  if (ret < 0) {
+    return rga_err_e::RGA_RECTANGLE_GROUP_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
+rga_err_e rotate(classRGAEasyUse &src, classRGAEasyUse &dst, rga_rotate_e degree) {
+  auto ret = imrotate(src.getRGABuffer(), dst.getRGABuffer(), static_cast<int>(degree));
+  if (ret < 0) {
+    return rga_err_e::RGA_ROTATE_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
+rga_err_e filp(classRGAEasyUse &src, classRGAEasyUse &dst, rga_flip_e flip) {
+  auto ret = imflip(src.getRGABuffer(), dst.getRGABuffer(), static_cast<int>(flip));
+  if (ret < 0) {
+    return rga_err_e::RGA_FLIP_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
+rga_err_e fill(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t r, uint8_t g, uint8_t b) {
+  auto [img_width, img_height, img_size] = src.getSize();
+  if (x > img_width || y > img_height) {
+    return rga_err_e::RGA_FILL_FAIL;
+  }
+  im_rect rect = {x, y, __clip(x, width, img_width), __clip(y, height, img_height)};
+  uint32_t color = (b << 16) | (g << 8) | r;
+  auto ret = imfill(src.getRGABuffer(), rect, color);
+  if (ret < 0) {
+    return rga_err_e::RGA_FILL_FAIL;
+  }
+  return rga_err_e::RGA_SUCCESS;
+}
+
+rga_err_e fillGroup(classRGAEasyUse &src, std::vector<std::array<uint16_t, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b) {
+  auto [img_width, img_height, img_size] = src.getSize();
+  std::vector<im_rect> rects;
+  int size = point_group.size();
+  rects.reserve(img_size);
+  for (auto &point : point_group) {
+    if (point[0] > img_width || point[1] > img_height) {
+      size--;
+      continue;
+    }
+    im_rect rect = {point[0], point[1], __clip(point[0], point[2], img_width), __clip(point[1], point[3], img_height)};
+    rects.insert(rects.end(), rect);
+  }
+  uint32_t color = (b << 16) | (g << 8) | r;
+  auto ret = imfillArray(src.getRGABuffer(), rects.data(), size, color);
+  if (ret < 0) {
+    return rga_err_e::RGA_FILL_FAIL;
   }
   return rga_err_e::RGA_SUCCESS;
 }

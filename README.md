@@ -12,4 +12,9 @@ RGA api详见 <https://github.com/airockchip/librga/blob/main/docs/Rockchip_Deve
   2. crop
   3. makeBorder
   4. rectangle
+  5. rectangleGroup
+  6. rotate
+  7. filp
+  8. fill
+  9. fillGroup
 ```
