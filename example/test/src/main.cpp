@@ -9,10 +9,10 @@ int main() {
   rga_src.init();
   rga_makeBorder.init();
   auto [width, height, size] = rga_makeBorder.getSize();
-  rga_src.inputRGA(src.data, src.cols * src.rows * 3);
+  rga_src.inputData(src.data, src.cols * src.rows * 3);
   JiuT_RGA::makeBorder(rga_src, rga_makeBorder, 30, 30, src.cols, src.rows);
   std::vector<uint8_t> data(size);
-  rga_makeBorder.getBufferData((void*)data.data(), size);
+  rga_makeBorder.getData((void*)data.data(), size);
   cv::Mat img(height, width, CV_8UC3, data.data());
   cv::imwrite("img.jpg", img);
 

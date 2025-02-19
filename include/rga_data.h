@@ -1,12 +1,12 @@
 /**
  * @file rga_data.h
  * @author JiuT (1094316934@qq.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2025-02-17
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once
@@ -36,4 +36,5 @@ enum class rga_format_e {
   RBG888 = RK_FORMAT_RGB_888,
   BGRA8888 = RK_FORMAT_BGRA_8888,
   RGBA8888 = RK_FORMAT_RGBA_8888,
+  NV12 = RK_FORMAT_YCbCr_420_SP,
 };

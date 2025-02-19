@@ -23,40 +23,48 @@ classRGAEasyUse::classRGAEasyUse(int width, int height, rga_format_e format) : f
   int byte_align = 1;
   if (vtr_byte_align_16_.end() != std::find(vtr_byte_align_16_.begin(), vtr_byte_align_16_.end(), static_cast<int>(format))) {
     byte_align = 16;
-  }
-  if (vtr_byte_align_4_.end() != std::find(vtr_byte_align_4_.begin(), vtr_byte_align_4_.end(), static_cast<int>(format))) {
+  } else if (vtr_byte_align_4_.end() != std::find(vtr_byte_align_4_.begin(), vtr_byte_align_4_.end(), static_cast<int>(format))) {
     byte_align = 4;
+  } else {
+    throw std::invalid_argument{"This format is not supported at this time"};
   }
   width_ = CLAC_ALIGN(width, byte_align);
   height_ = CLAC_ALIGN(height, byte_align);
+
+  int rga_format = static_cast<int>(format_);
+  dma_obj_.dma_buf_size = width_ * height_ * get_bpp_from_format(rga_format);
+  auto ret = dma_buf_alloc(DMA_HEAP_DMA32_UNCACHED_PATH, dma_obj_.dma_buf_size, &dma_obj_.dma_fd, (void **)&dma_obj_.dma_buf);
+  if (ret < 0) {
+    throw std::runtime_error{"dma_buf_alloc failed"};
+  }
+  rga_handle_ = importbuffer_fd(dma_obj_.dma_fd, dma_obj_.dma_buf_size);
+  rga_buffer_ = wrapbuffer_handle(rga_handle_, width_, height_, rga_format);
+  is_init_ = true;
 }
 
 classRGAEasyUse::~classRGAEasyUse() {
   if (rga_handle_) releasebuffer_handle(rga_handle_);
   if (dma_obj_.dma_buf) dma_buf_free(dma_obj_.dma_buf_size, &dma_obj_.dma_fd, dma_obj_.dma_buf);
 }
-rga_err_e classRGAEasyUse::init() {
-  int rga_format = static_cast<int>(format_);
-  dma_obj_.dma_buf_size = width_ * height_ * get_bpp_from_format(rga_format);
-  auto ret = dma_buf_alloc(DMA_HEAP_DMA32_UNCACHED_PATH, dma_obj_.dma_buf_size, &dma_obj_.dma_fd, (void **)&dma_obj_.dma_buf);
-  if (ret < 0) {
-    return rga_err_e::RGA_DMA32_ALLOC_FAIL;
-  }
-  rga_handle_ = importbuffer_fd(dma_obj_.dma_fd, dma_obj_.dma_buf_size);
-  rga_buffer_ = wrapbuffer_handle(rga_handle_, width_, height_, rga_format);
-  return rga_err_e::RGA_SUCCESS;
-}
 
-rga_err_e classRGAEasyUse::inputRGA(const uint8_t *data, uint32_t size) {
-  if (size != dma_obj_.dma_buf_size) {
-    throw std::length_error{"The input size does not match: need " + std::to_string(dma_obj_.dma_buf_size) + ", but got " + std::to_string(size)};
+rga_err_e classRGAEasyUse::inputData(const uint8_t *data, uint32_t size) {
+  if (!is_init_) {
+    throw std::runtime_error{"rga is not initialized"};
+  }
+
+  if (size > dma_obj_.dma_buf_size) {
+    throw std::length_error{"The input size does not match: need <=" + std::to_string(dma_obj_.dma_buf_size) + ", but got " + std::to_string(size)};
   }
   memcpy(dma_obj_.dma_buf, data, size);
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e classRGAEasyUse::getBufferData(void *data, uint32_t size) {
-  if (size != dma_obj_.dma_buf_size) {
+rga_err_e classRGAEasyUse::getData(void *data, uint32_t size) {
+  if (!is_init_) {
+    throw std::runtime_error{"rga is not initialized"};
+  }
+
+  if (size > dma_obj_.dma_buf_size) {
     throw std::length_error{"The output size does not match: need " + std::to_string(dma_obj_.dma_buf_size) + ", but got " + std::to_string(size)};
   }
   memcpy(data, dma_obj_.dma_buf, size);
