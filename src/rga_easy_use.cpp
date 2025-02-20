@@ -94,13 +94,13 @@ rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int wid
   return rga_err_e::RGA_SUCCESS;
 }
 
-rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int left, int upper) {
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int left, int upper, int width, int height) {
   auto [fg_width, fg_height, fg_size] = src.getSize();
   auto [bg_width, bg_height, bg_size] = dst.getSize();
   if (left > bg_width || upper > bg_height) {
     return rga_err_e::RGA_MAKE_BORDER_FAIL;
   }
-  im_rect rect = {NUM_UP(left, 0), NUM_UP(upper, 0), fg_width, fg_height};
+  im_rect rect = {NUM_UP(left, 0), NUM_UP(upper, 0), width, height};
   auto ret = improcess(src.getRGABuffer(), dst.getRGABuffer(), {}, {}, rect, {}, IM_SYNC);
   if (ret < 0) {
     return rga_err_e::RGA_MAKE_BORDER_FAIL;

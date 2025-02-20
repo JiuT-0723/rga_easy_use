@@ -76,7 +76,7 @@ rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int wid
  * @param height 输入图像高度
  * @return rga_err_e
  */
-rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int left, int upper);
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int left, int upper, int width, int height);
 
 /**
  * @brief 绘制矩形
