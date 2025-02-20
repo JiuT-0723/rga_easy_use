@@ -63,7 +63,7 @@ rga_err_e resize(classRGAEasyUse &src, classRGAEasyUse &dst);
  * @param height 裁剪区域高度
  * @return rga_err_e
  */
-rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, int x, int y, int width, int height);
 
 /**
  * @brief 扩展边框
@@ -76,7 +76,7 @@ rga_err_e crop(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t x, uint16_t 
  * @param height 输入图像高度
  * @return rga_err_e
  */
-rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t left, uint16_t upper);
+rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, int left, int upper);
 
 /**
  * @brief 绘制矩形
@@ -92,7 +92,7 @@ rga_err_e makeBorder(classRGAEasyUse &src, classRGAEasyUse &dst, uint16_t left, 
  * @param line_width 线条宽度
  * @return rga_err_e
  */
-rga_err_e rectangle(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width = 2);
+rga_err_e rectangle(classRGAEasyUse &src, int x, int y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width = 2);
 
 /**
  * @brief 绘制一组矩形框
@@ -105,7 +105,7 @@ rga_err_e rectangle(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width
  * @param line_width 线条宽度
  * @return rga_err_e
  */
-rga_err_e rectangleGroup(classRGAEasyUse &src, std::vector<std::array<uint16_t, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width = 2);
+rga_err_e rectangleGroup(classRGAEasyUse &src, std::vector<std::array<int, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b, uint8_t line_width = 2);
 
 /**
  * @brief 旋转
@@ -140,7 +140,7 @@ rga_err_e filp(classRGAEasyUse &src, classRGAEasyUse &dst, rga_flip_e flip);
  * @param b
  * @return rga_err_e
  */
-rga_err_e fill(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t r, uint8_t g, uint8_t b);
+rga_err_e fill(classRGAEasyUse &src, int x, int y, uint16_t width, uint16_t height, uint8_t r, uint8_t g, uint8_t b);
 
 /**
  * @brief 指定区域颜色填充 （矩形组）
@@ -152,6 +152,6 @@ rga_err_e fill(classRGAEasyUse &src, uint16_t x, uint16_t y, uint16_t width, uin
  * @param b
  * @return rga_err_e
  */
-rga_err_e fillGroup(classRGAEasyUse &src, std::vector<std::array<uint16_t, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b);
+rga_err_e fillGroup(classRGAEasyUse &src, std::vector<std::array<int, 4>> &point_group, uint8_t r, uint8_t g, uint8_t b);
 
 }  // namespace JiuT_RGA

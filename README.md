@@ -3,7 +3,7 @@
 
 RGA api详见 <https://github.com/airockchip/librga/blob/main/docs/Rockchip_Developer_Guide_RGA_CN.md>
 
-需要设备驱动文件`/dev/dma_heap/system-uncached-dma32`
+**<font color="red">注：需要设备驱动文件</font>** `/dev/dma_heap/system-uncached-dma32`
 
 ## 当前完成功能
 
