@@ -20,7 +20,7 @@ class DmaObject {
  public:
   int dma_fd;
   size_t dma_buf_size;
-  char *dma_buf;
+  char *dma_buf = nullptr;
 };
 
 class DrmObject {
@@ -33,10 +33,11 @@ class DrmObject {
 
 enum class rga_format_e {
   BGR888 = RK_FORMAT_BGR_888,
-  RBG888 = RK_FORMAT_RGB_888,
+  RGB888 = RK_FORMAT_RGB_888,
   BGRA8888 = RK_FORMAT_BGRA_8888,
   RGBA8888 = RK_FORMAT_RGBA_8888,
   NV12 = RK_FORMAT_YCbCr_420_SP,
+  YUV = RK_FORMAT_YCbCr_422_SP,
 };
 
 enum class rga_rotate_e {
@@ -50,4 +51,3 @@ enum class rga_flip_e {
   FLIP_V = IM_HAL_TRANSFORM_FLIP_V,
   FLIP_H_V = IM_HAL_TRANSFORM_FLIP_H_V,
 };
-
